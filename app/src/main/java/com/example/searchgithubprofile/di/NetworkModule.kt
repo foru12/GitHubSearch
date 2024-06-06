@@ -14,12 +14,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private val BASE_URL = "https://api.github.com/"
-    private const val TOKEN = "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"
+    //private const val TOKEN = ""
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
 
-
+/*
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
@@ -27,14 +27,14 @@ object NetworkModule {
                     .build()
                 chain.proceed(request)
             }
-            .build()
+            .build()*/
 
 
 
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(client)
+          //  .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
