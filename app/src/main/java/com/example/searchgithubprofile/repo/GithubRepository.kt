@@ -16,7 +16,7 @@ class GithubRepository @Inject constructor(private val service: GithubService) {
 
 
         return Pager(
-            config = PagingConfig(pageSize = 20),
+            config = PagingConfig(pageSize = 10),
             pagingSourceFactory = { RepositoryPagingSource(service, query) }
         ).flow
     }

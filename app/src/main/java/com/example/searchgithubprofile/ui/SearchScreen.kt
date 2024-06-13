@@ -3,6 +3,7 @@ package com.example.searchgithubprofile.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.compose.material.Card
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +52,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -58,10 +61,11 @@ fun SearchScreen(
     handleRepositoryClick: (SearchItem.Repository) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    var isSearchInitiated by remember { mutableStateOf(false) }
-    val repositories = viewModel.searchResults.collectAsLazyPagingItems()
+    var searchText by rememberSaveable { mutableStateOf("") }
+    var isSearchInitiated by rememberSaveable { mutableStateOf(false) }
+    val repositories = viewModel.newSearchResults.collectAsLazyPagingItems()
     val scrollState = rememberLazyListState()
+
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -79,12 +83,8 @@ fun SearchScreen(
             OutlinedTextField(
                 value = searchText,
                 onValueChange = {
-                    if (!isLoading && !isRefreshing) {
-                        searchText = it
-                        if (it.text.isEmpty()) {
-                            isSearchInitiated = false
-                        }
-                    }
+                    searchText = it
+                    isSearchInitiated = it.isNotBlank()
                 },
                 label = { Text("Search") },
                 modifier = Modifier
@@ -94,14 +94,11 @@ fun SearchScreen(
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            Log.d("isLoading",isLoading.toString())
-                            Log.d("isRefreshing",isRefreshing.toString())
-                            if (!isLoading && !isRefreshing) {
-                                isSearchInitiated = true
-                                viewModel.onQueryChanged(searchText.text)
+                            if (!isLoading && !isRefreshing && searchText.length >= 3) {
+                                viewModel.onQueryChanged(searchText)
                             }
                         },
-                        enabled = !isLoading && !isRefreshing
+                        enabled = !isLoading && !isRefreshing && searchText.length >= 3
                     ) {
                         Icon(imageVector = Icons.Filled.Search, contentDescription = "Search")
                     }
@@ -111,7 +108,6 @@ fun SearchScreen(
                     unfocusedBorderColor = Color.Black,
                     cursorColor = Color.Black
                 )
-
             )
 
             // Отображаем сообщение об ошибке, если оно есть
@@ -124,7 +120,7 @@ fun SearchScreen(
             }
 
             // Отображаем индикатор загрузки
-            if (isLoading) {
+            if (isLoading || isRefreshing) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize()
@@ -139,7 +135,8 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        state = scrollState
                     ) {
                         items(repositories.itemCount) { index ->
                             val item = repositories[index]
@@ -161,8 +158,9 @@ fun SearchScreen(
                                             handleRepositoryClick(repositoryName)
                                         }
                                     }
-
-                                    else -> {Text("Unsupported item type")}
+                                    else -> {
+                                        Text("Unsupported item type")
+                                    }
                                 }
                             }
                         }
