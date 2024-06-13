@@ -2,7 +2,7 @@ package com.example.searchgithubprofile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.searchgithubprofile.model.ProfileData
+import com.example.searchgithubprofile.model.repo.ProfileData
 import com.example.searchgithubprofile.repo.GithubRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -9,9 +9,11 @@ color teal_700
 color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable no_internet_ic
 drawable place_holder_im
 drawable top_arrow_ic
 drawable user
+layout activity_main
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name

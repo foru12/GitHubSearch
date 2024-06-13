@@ -7,8 +7,8 @@ import dagger.internal.Factory;
 import dagger.internal.Preconditions;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
+import io.ktor.client.HttpClient;
 import javax.inject.Provider;
-import retrofit2.Retrofit;
 
 @ScopeMetadata("javax.inject.Singleton")
 @QualifierMetadata
@@ -20,23 +20,23 @@ import retrofit2.Retrofit;
     "KotlinInternalInJava"
 })
 public final class NetworkModule_ProvideGithubServiceFactory implements Factory<GithubService> {
-  private final Provider<Retrofit> retrofitProvider;
+  private final Provider<HttpClient> clientProvider;
 
-  public NetworkModule_ProvideGithubServiceFactory(Provider<Retrofit> retrofitProvider) {
-    this.retrofitProvider = retrofitProvider;
+  public NetworkModule_ProvideGithubServiceFactory(Provider<HttpClient> clientProvider) {
+    this.clientProvider = clientProvider;
   }
 
   @Override
   public GithubService get() {
-    return provideGithubService(retrofitProvider.get());
+    return provideGithubService(clientProvider.get());
   }
 
   public static NetworkModule_ProvideGithubServiceFactory create(
-      Provider<Retrofit> retrofitProvider) {
-    return new NetworkModule_ProvideGithubServiceFactory(retrofitProvider);
+      Provider<HttpClient> clientProvider) {
+    return new NetworkModule_ProvideGithubServiceFactory(clientProvider);
   }
 
-  public static GithubService provideGithubService(Retrofit retrofit) {
-    return Preconditions.checkNotNullFromProvides(NetworkModule.INSTANCE.provideGithubService(retrofit));
+  public static GithubService provideGithubService(HttpClient client) {
+    return Preconditions.checkNotNullFromProvides(NetworkModule.INSTANCE.provideGithubService(client));
   }
 }

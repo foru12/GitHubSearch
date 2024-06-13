@@ -9,6 +9,7 @@
         android:targetSdkVersion="34" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <permission
         android:name="com.example.searchgithubprofile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
@@ -29,12 +30,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:testOnly="true"
-        android:theme="@style/Theme.SearchGitHubProfile" >
+        android:theme="@style/Theme.SearchGitHubProfile"
+        android:usesCleartextTraffic="true" >
         <activity
-            android:name="com.example.searchgithubprofile.mainui.MainActivity"
+            android:name="com.example.searchgithubprofile.ui.MainActivity"
+            android:configChanges="screenSize|orientation"
             android:exported="true"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.SearchGitHubProfile" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

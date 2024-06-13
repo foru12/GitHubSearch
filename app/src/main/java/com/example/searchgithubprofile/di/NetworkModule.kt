@@ -5,43 +5,53 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.*
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private val BASE_URL = "https://api.github.com/"
+    private const val BASE_URL = "https://api.github.com/"
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-
-/*
-        val client = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer $TOKEN")
-                    .build()
-                chain.proceed(request)
+    fun provideHttpClient(): HttpClient {
+        return HttpClient(CIO) {
+            install(ContentNegotiation) {
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                    encodeDefaults = false
+                }
             }
-            .build()*/
 
+            install(Logging) {
+                level = LogLevel.ALL
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        println(message)
+                    }
+                }
+            }
 
-
-
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-          //  .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+            defaultRequest {
+                url(BASE_URL)
+            }
+        }
     }
 
     @Provides
     @Singleton
-    fun provideGithubService(retrofit: Retrofit): GithubService {
-        return retrofit.create(GithubService::class.java)
+    fun provideGithubService(client: HttpClient): GithubService {
+        return GithubService(client)
     }
 }

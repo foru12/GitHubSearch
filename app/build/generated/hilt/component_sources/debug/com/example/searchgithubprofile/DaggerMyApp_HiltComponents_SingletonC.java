@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.example.searchgithubprofile.di.NetworkModule_ProvideGithubServiceFactory;
-import com.example.searchgithubprofile.di.NetworkModule_ProvideRetrofitFactory;
+import com.example.searchgithubprofile.di.NetworkModule_ProvideHttpClientFactory;
 import com.example.searchgithubprofile.di.RepositoryModule_ProvideGithubRepositoryFactory;
-import com.example.searchgithubprofile.mainui.MainActivity;
 import com.example.searchgithubprofile.network.GithubService;
 import com.example.searchgithubprofile.repo.GithubRepository;
+import com.example.searchgithubprofile.ui.MainActivity;
+import com.example.searchgithubprofile.viewmodel.RepositoryDetailsViewModel;
+import com.example.searchgithubprofile.viewmodel.RepositoryDetailsViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.example.searchgithubprofile.viewmodel.SearchViewModel;
 import com.example.searchgithubprofile.viewmodel.SearchViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.example.searchgithubprofile.viewmodel.UserDetailsViewModel;
@@ -37,10 +39,10 @@ import dagger.internal.MapBuilder;
 import dagger.internal.Preconditions;
 import dagger.internal.Provider;
 import dagger.internal.SetBuilder;
+import io.ktor.client.HttpClient;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import retrofit2.Retrofit;
 
 @DaggerGenerated
 @SuppressWarnings({
@@ -374,7 +376,7 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
 
     @Override
     public Set<String> getViewModelKeys() {
-      return SetBuilder.<String>newSetBuilder(2).add(SearchViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(UserDetailsViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
+      return SetBuilder.<String>newSetBuilder(3).add(RepositoryDetailsViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(SearchViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(UserDetailsViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
     }
 
     @Override
@@ -400,6 +402,8 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
 
     private final ViewModelCImpl viewModelCImpl = this;
 
+    private Provider<RepositoryDetailsViewModel> repositoryDetailsViewModelProvider;
+
     private Provider<SearchViewModel> searchViewModelProvider;
 
     private Provider<UserDetailsViewModel> userDetailsViewModelProvider;
@@ -417,13 +421,14 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
     @SuppressWarnings("unchecked")
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
-      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.userDetailsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.repositoryDetailsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.userDetailsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put("com.example.searchgithubprofile.viewmodel.SearchViewModel", ((Provider) searchViewModelProvider)).put("com.example.searchgithubprofile.viewmodel.UserDetailsViewModel", ((Provider) userDetailsViewModelProvider)).build();
+      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(3).put("com.example.searchgithubprofile.viewmodel.RepositoryDetailsViewModel", ((Provider) repositoryDetailsViewModelProvider)).put("com.example.searchgithubprofile.viewmodel.SearchViewModel", ((Provider) searchViewModelProvider)).put("com.example.searchgithubprofile.viewmodel.UserDetailsViewModel", ((Provider) userDetailsViewModelProvider)).build();
     }
 
     @Override
@@ -452,10 +457,13 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.example.searchgithubprofile.viewmodel.SearchViewModel 
+          case 0: // com.example.searchgithubprofile.viewmodel.RepositoryDetailsViewModel 
+          return (T) new RepositoryDetailsViewModel(singletonCImpl.provideGithubRepositoryProvider.get());
+
+          case 1: // com.example.searchgithubprofile.viewmodel.SearchViewModel 
           return (T) new SearchViewModel(singletonCImpl.provideGithubRepositoryProvider.get());
 
-          case 1: // com.example.searchgithubprofile.viewmodel.UserDetailsViewModel 
+          case 2: // com.example.searchgithubprofile.viewmodel.UserDetailsViewModel 
           return (T) new UserDetailsViewModel(singletonCImpl.provideGithubRepositoryProvider.get());
 
           default: throw new AssertionError(id);
@@ -536,7 +544,7 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
   private static final class SingletonCImpl extends MyApp_HiltComponents.SingletonC {
     private final SingletonCImpl singletonCImpl = this;
 
-    private Provider<Retrofit> provideRetrofitProvider;
+    private Provider<HttpClient> provideHttpClientProvider;
 
     private Provider<GithubService> provideGithubServiceProvider;
 
@@ -550,7 +558,7 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
 
     @SuppressWarnings("unchecked")
     private void initialize() {
-      this.provideRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 2));
+      this.provideHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<HttpClient>(singletonCImpl, 2));
       this.provideGithubServiceProvider = DoubleCheck.provider(new SwitchingProvider<GithubService>(singletonCImpl, 1));
       this.provideGithubRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<GithubRepository>(singletonCImpl, 0));
     }
@@ -592,10 +600,10 @@ public final class DaggerMyApp_HiltComponents_SingletonC {
           return (T) RepositoryModule_ProvideGithubRepositoryFactory.provideGithubRepository(singletonCImpl.provideGithubServiceProvider.get());
 
           case 1: // com.example.searchgithubprofile.network.GithubService 
-          return (T) NetworkModule_ProvideGithubServiceFactory.provideGithubService(singletonCImpl.provideRetrofitProvider.get());
+          return (T) NetworkModule_ProvideGithubServiceFactory.provideGithubService(singletonCImpl.provideHttpClientProvider.get());
 
-          case 2: // retrofit2.Retrofit 
-          return (T) NetworkModule_ProvideRetrofitFactory.provideRetrofit();
+          case 2: // io.ktor.client.HttpClient 
+          return (T) NetworkModule_ProvideHttpClientFactory.provideHttpClient();
 
           default: throw new AssertionError(id);
         }

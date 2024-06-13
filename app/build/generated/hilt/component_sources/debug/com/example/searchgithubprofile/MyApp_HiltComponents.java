@@ -2,7 +2,8 @@ package com.example.searchgithubprofile;
 
 import com.example.searchgithubprofile.di.NetworkModule;
 import com.example.searchgithubprofile.di.RepositoryModule;
-import com.example.searchgithubprofile.mainui.MainActivity_GeneratedInjector;
+import com.example.searchgithubprofile.ui.MainActivity_GeneratedInjector;
+import com.example.searchgithubprofile.viewmodel.RepositoryDetailsViewModel_HiltModules;
 import com.example.searchgithubprofile.viewmodel.SearchViewModel_HiltModules;
 import com.example.searchgithubprofile.viewmodel.UserDetailsViewModel_HiltModules;
 import dagger.Binds;
@@ -152,6 +153,7 @@ public final class MyApp_HiltComponents {
           HiltWrapper_SavedStateHandleModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
+          RepositoryDetailsViewModel_HiltModules.KeyModule.class,
           SearchViewModel_HiltModules.KeyModule.class,
           UserDetailsViewModel_HiltModules.KeyModule.class
       }
@@ -190,6 +192,7 @@ public final class MyApp_HiltComponents {
   @Subcomponent(
       modules = {
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          RepositoryDetailsViewModel_HiltModules.BindsModule.class,
           SearchViewModel_HiltModules.BindsModule.class,
           UserDetailsViewModel_HiltModules.BindsModule.class
       }
