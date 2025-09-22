@@ -22,7 +22,6 @@
 • Kotlin Flow
 • Paging 3
 
-
 Дополнительно:
 
 Приложение использует открытое API сервиса GitHub (https://developer.github.com/v3/), реализуя следующий функционал:
